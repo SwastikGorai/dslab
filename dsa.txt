@@ -1,0 +1,598 @@
+// doubly linked list
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+	int data;
+	struct Node* next;
+	struct Node* prev;
+};
+void deleteNode(struct Node** head_ref, struct Node* del)
+{
+
+	if (*head_ref == NULL || del == NULL)
+		return;
+
+	if (*head_ref == del)
+		*head_ref = del->next;
+
+	if (del->next != NULL)
+		del->next->prev = del->prev;
+
+
+	if (del->prev != NULL)
+		del->prev->next = del->next;
+
+
+	free(del);
+	return;
+}
+void push(struct Node** head_ref, int new_data)
+{
+	struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+
+	new_node->data = new_data;
+	new_node->prev = NULL;
+	new_node->next = (*head_ref);
+	if ((*head_ref) != NULL)
+		(*head_ref)->prev = new_node;
+
+
+	(*head_ref) = new_node;
+}
+
+void printList(struct Node* node)
+{
+	while (node != NULL) {
+		printf("%d ", node->data);
+		node = node->next;
+	}
+}
+int main()
+{
+	struct Node* head = NULL;
+	int x,c;
+    scanf("%d", &x);
+    for(int i=0; i<x; i++){
+        scanf("%d", &c);
+        push(&head, c);
+    }
+
+	printf("\n Original Linked list ");
+	printList(head);
+
+	deleteNode(&head, head);
+	deleteNode(&head, head->next); 
+	deleteNode(&head, head->next);
+	printf("\n Modified Linked list ");
+	printList(head);
+
+	getchar();
+}
+
+
+
+
+
+
+//  circular queue
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+    int data;
+    struct node* next;
+};
+struct node *front = 0;
+struct node *rear = 0;
+
+void enqueue(int x){
+    struct node* newnode;
+    newnode = (struct node*)malloc(sizeof(struct node));
+    newnode -> data = x;
+    newnode -> next = NULL;
+    if(rear == 0){
+        front = rear = newnode;
+        rear -> next = front;
+    }
+    else{
+        rear -> next = newnode;
+        rear = newnode;
+        rear -> next = front;
+    }
+}
+void dequeue(){
+    struct node* temp;
+    temp = front;
+    if(front == 0 && rear == 0){
+        printf("Underflow\n");
+    }
+    else if(front==rear){
+        front = rear = 0;
+        free(temp);
+    }
+    else{
+        front = front -> next;
+        rear -> next = front;
+        free(temp);
+    }
+}
+void display(){
+    struct node* temp;
+    temp = front;
+    if(front == 0 && rear == 0){
+        printf("Queue is empty\n");
+    }
+    else{
+        while(temp -> next != front){
+            printf("%d ",temp -> data);
+            temp = temp -> next;
+        }
+        printf("%d",temp -> data);
+    }
+    printf("\n");
+}
+int main(){
+    int choice,item;
+    while(1){
+        printf("1.Insert\n");
+        printf("2.Delete\n");
+        printf("3.Display\n");
+        printf("4.Quit\n");
+        printf("Enter your choice : ");
+        scanf("%d",&choice);
+        switch(choice)
+        {
+            case 1 :
+            printf("Input the element for insertion in queue : ");
+            scanf("%d", &item);
+            enqueue(item);
+            break;
+            case 2 :
+            dequeue();
+            break;
+            case 3:
+            display();
+            break;
+            case 4:
+            exit(0);
+        }
+    }
+}
+
+
+
+//queue using linked list
+
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+    int data;
+    struct node *next;
+};
+
+struct node *front = NULL;
+struct node *rear = NULL;
+
+void enqueue(int n)
+{
+    struct node *new;
+    new = (struct node *)malloc(sizeof(struct node));
+    new->next = NULL;
+    new->data = n;
+    if (front == NULL && rear == NULL)
+    {
+        front = new;
+        rear = new;
+    }
+    else
+    {
+        rear->next = new;
+        rear = new;
+    }
+}
+
+void dequeue()
+{
+    struct node *temp;
+    temp = front;
+    if (front == NULL && rear == NULL)
+        printf("Queue is empty");
+    else
+    {
+        front = front->next;
+        free(temp);
+    }
+}
+
+void peek()
+{
+    if (front == NULL && rear == NULL)
+        printf("Queue is empty");
+    else
+    {
+        printf("\nFront value is: %d\n", front->data);
+    }
+}
+
+void display()
+{
+    struct node *temp;
+    if (front == NULL && rear == NULL)
+        printf("Queue is empty");
+    else
+    {
+        temp = front;
+        while (temp != NULL)
+        {
+            printf("%d ", temp->data);
+            temp = temp->next;
+        }
+    }
+}
+
+int main()
+{
+    enqueue(5);
+    enqueue(6);
+    enqueue(7);
+    enqueue(8);
+    dequeue();
+    peek();
+    display();
+}
+
+
+
+
+//infix to postfix
+
+
+#include<stdio.h>
+#include<ctype.h>
+
+char stack[100];
+int top = -1;
+
+void push(char x)
+{
+    stack[++top] = x;
+}
+
+char pop()
+{
+    if(top == -1)
+        return -1;
+    else
+        return stack[top--];
+}
+
+int priority(char x)
+{
+    if(x == '(')
+        return 0;
+    if(x == '+' || x == '-')
+        return 1;
+    if(x == '*' || x == '/')
+        return 2;
+    return 0;
+}
+
+int main()
+{
+    char exp[100];
+    char *e, x;
+    printf("Enter the expression : ");
+    scanf("%s",exp);
+    printf("\n");
+    e = exp;
+    
+    while(*e != '\0')
+    {
+        if(isalnum(*e))
+            printf("%c ",*e);
+        else if(*e == '(')
+            push(*e);
+        else if(*e == ')')
+        {
+            while((x = pop()) != '(')
+                printf("%c ", x);
+        }
+        else
+        {
+            while(priority(stack[top]) >= priority(*e))
+                printf("%c ",pop());
+            push(*e);
+        }
+        e++;
+    }
+    
+    while(top != -1)
+    {
+        printf("%c ",pop());
+    }return 0;
+}
+
+
+
+
+//postfix evaluation
+
+
+#include<stdio.h>
+#include<ctype.h>
+int stack[20];
+int top = -1;
+
+void push(int x)
+{
+    stack[++top] = x;
+}
+
+int pop()
+{
+    return stack[top--];
+}
+
+int main()
+{
+    char exp[20];
+    char *e;
+    int n1,n2,n3,num;
+    printf("Enter the expression :: ");
+    scanf("%s",exp);
+    e = exp;
+    while(*e != '\0')
+    {
+        if(isdigit(*e))
+        {
+            num = *e - 48;
+            push(num);
+        }
+        else
+        {
+            n1 = pop();
+            n2 = pop();
+            switch(*e)
+            {
+            case '+':
+            {
+                n3 = n1 + n2;
+                break;
+            }
+            case '-':
+            {
+                n3 = n2 - n1;
+                break;
+            }
+            case '*':
+            {
+                n3 = n1 * n2;
+                break;
+            }
+            case '/':
+            {
+                n3 = n2 / n1;
+                break;
+            }
+            }
+            push(n3);
+        }
+        e++;
+    }
+    printf("\nThe result of expression %s  =  %d\n\n",exp,pop());
+    return 0;
+}
+
+
+// inorder preorder postorder
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+	int data;
+	struct node *left, *right;
+};
+
+struct node* newNode(int key){
+	struct node* temp = (struct node*)malloc(sizeof(struct node));
+	temp->data = key;
+	temp->left = NULL;
+	temp->right = NULL;
+	return temp;
+}
+
+struct node* insert(struct node *node, int dt){
+	if(node == NULL)
+		return newNode(dt);
+	if(node->data > dt)
+		node->left = insert(node->left, dt);
+	else if(node->data < dt)
+		node->right = insert(node->right, dt);
+	return node;
+}
+
+void dispinorder(struct node* root)
+{
+    if (root != NULL) {
+        dispinorder(root->left);
+        printf("%d ", root->data);
+        dispinorder(root->right);
+    }
+}
+void dispostorder(struct node* root)
+{
+    if (root != NULL) {
+        dispostorder(root->left);
+        dispostorder(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+void dispreorder(struct node* root)
+{
+    if (root != NULL) {
+        printf("%d ", root->data);
+        dispreorder(root->left);
+        dispreorder(root->right);
+    }
+}
+
+int main(){
+    struct node *root = NULL;
+    int a=1,choice;
+    printf("Create tree: \n");
+    while(a){
+        printf("Enter number to insert(0 to stop):\n");
+        scanf("%d", &a);
+        if(a!=0)
+        root = insert(root, a);
+    }
+    printf("Preorder Traversal:\n");
+    dispreorder(root);
+    printf("\nInorder Traversal:\n");
+    dispinorder(root);
+    printf("\nPostorder Traversal:\n");
+    dispostorder(root);
+     return 0;
+}
+
+
+
+//binary search tree
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+	int data;
+	struct node *left, *right;
+};
+
+struct node* newNode(int key){
+	struct node* temp = (struct node*)malloc(sizeof(struct node));
+	temp->data = key;
+	temp->left = NULL;
+	temp->right = NULL;
+	return temp;
+}
+
+struct node* insert(struct node *node, int dt){
+	if(node == NULL)
+		return newNode(dt);
+	if(node->data > dt)
+		node->left = insert(node->left, dt);
+	else if(node->data < dt)
+		node->right = insert(node->right, dt);
+	return node;
+}
+
+struct node *minNode(struct node *node){
+	struct node *temp = node;
+	if(temp -> left == NULL)
+		return temp;
+	else{
+		while(temp->left != NULL){
+			temp = temp->left;
+		}
+		return temp;
+	}
+}
+
+struct node* delete(struct node *root, int dt){
+		if(root == NULL)
+            return root;
+        if (dt < root->data)
+            root->left = delete(root->left, dt);
+        else if (dt > root->data)
+            root->right = delete(root->right, dt);
+        else{
+            //struct node *find = search(root, dt);
+		    if (root->left == NULL) {
+            		struct node* temp = root->right;
+            		free(root);
+            		return temp;
+            }
+            else if (root->right == NULL) {
+            	struct node* temp = root->left;
+            	free(root);
+            	return temp;
+            }
+            struct node *temp = minNode(root->right);
+    	    root->data = temp->data;
+    	    root->right = delete(root->right, temp->data);
+        }
+	return root;
+	
+}
+
+void dispinorder(struct node* root)
+{
+    if (root != NULL) {
+        dispinorder(root->left);
+        printf("%d ", root->data);
+        dispinorder(root->right);
+    }
+}
+
+int main(){
+	struct node *root = NULL;
+    int a=1,choice;
+    printf("Create tree: \n");
+    while(a){
+        printf("Enter number to insert(0 to stop):\n");
+        scanf("%d", &a);
+        if(a!=0)
+        root = insert(root, a);
+    }
+  	 while(22){
+  	 	printf("Menu:\n\n1.Display\n2.Insert node\n3.Delete node\n4.Exit\n\nEnter your choice no.: ");
+  		scanf("%d",&choice);
+  		if(choice==1){
+   			printf("Current status:\n");
+   			dispinorder(root);
+  		}
+  		else if(choice==2){
+  		    int elm;
+   			printf("Enter element you want to push: ");
+   			scanf("%d", &elm);
+   			insert(root, elm);
+  		}
+  		else if(choice==3){
+            int elm;
+   			printf("Enter element to delete: ");
+   			scanf("%d", &elm);
+    	    delete(root, elm);
+        }
+  		else if(choice == 4)
+    			break;
+        else
+            printf("Invalid choice\n");
+  	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
